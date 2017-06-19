@@ -1,0 +1,14 @@
+{
+  "name": "ais-data-fetcher",
+  "version": "1.0.0",
+  "description": "Fetch Ais Data From A Json Feed",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "author": "Bernt Anker <bernt.anker@me.com> (http://bernt-anker.com)",
+  "license": "ISC",
+  "dependencies": {
+    "node-fetch": "^1.7.1"
+  }
+}
