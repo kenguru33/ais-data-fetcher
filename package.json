@@ -4,11 +4,15 @@
   "description": "Fetch Ais Data From A Json Feed",
   "main": "index.js",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha ./**/*.spec.js"
   },
   "author": "Bernt Anker <bernt.anker@me.com> (http://bernt-anker.com)",
   "license": "ISC",
   "dependencies": {
     "node-fetch": "^1.7.1"
+  },
+  "devDependencies": {
+    "chai": "^4.0.2",
+    "mocha": "^3.4.2"
   }
 }
