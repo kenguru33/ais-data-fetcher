@@ -1,0 +1,1 @@
+# Ais Data Fetcher - fetching from ais json feed
