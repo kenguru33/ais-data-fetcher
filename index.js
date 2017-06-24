@@ -1,5 +1,5 @@
 const aisDataFetcher = require('./lib/kystverket/index')
-if (!process.env.URl) throw new Error('Url must be specified')
+if (!process.env.URl) process.exit()
 console.log('starting  fetching from ' + process.env.URL)
 setInterval(() => {
   aisDataFetcher(process.env.URL)
