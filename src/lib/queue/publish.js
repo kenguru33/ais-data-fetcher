@@ -19,5 +19,4 @@ const publish = function (msg) {
   client.publish('presence', msg)
 }
 
-
 module.exports = publish
