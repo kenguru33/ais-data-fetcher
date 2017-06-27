@@ -1,3 +1,4 @@
+// just a comment!
 const aisDataFetcher = require('./lib/kystverket/index')
 if (!process.env.URL) {
   console.log('Url is empty')
