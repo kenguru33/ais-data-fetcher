@@ -9,6 +9,7 @@
   "author": "Bernt Anker <bernt.anker@me.com> (http://bernt-anker.com)",
   "license": "ISC",
   "dependencies": {
+    "amqplib": "^0.5.1",
     "node-fetch": "^1.7.1"
   },
   "devDependencies": {
