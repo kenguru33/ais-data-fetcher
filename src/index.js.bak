@@ -1,0 +1,90 @@
+// const producer = require('./lib/queue/producer')
+const amqp = require('amqplib/callback_api')
+const aisDataFetcher = require('./lib/kystverket/index')
+
+if (!process.env.URL) {
+  console.log('Url is empty')
+  process.exit()
+}
+
+let amqpConn = null
+
+const start = function () {
+  amqp.connect(process.env.MESSAGE_BROKER_URL + '?heartbeat=60', (err, conn) => {
+    if (err) {
+      console.error('[AMQP]', err.message)
+      return setTimeout(start, 1000)
+    }
+    conn.on('error', err => {
+      if (err.message !== 'Connection closing') {
+        console.error('[AMQP] conn error', err.message)
+      }
+    })
+    conn.on('close', () => {
+      console.error('[AMQP] reconnecting')
+      return setTimeout(start, 1000)
+    })
+    console.log('[AMQP] connected')
+    amqpConn = conn
+    whenConnected()
+  })
+}
+
+const whenConnected = function () {
+  startPublisher()
+}
+
+let pubChannel = null
+let offlinePubQueue = []
+
+const startPublisher = function () {
+  amqpConn.createConfirmChannel(function (err, ch) {
+    if (closeOnErr(err)) return
+    ch.on('error', function (err) {
+      console.error('[AMQP] channel error', err.message)
+    })
+    ch.on('close', function () {
+      console.log('[AMQP] channel closed')
+    })
+    pubChannel = ch
+    while (true) {
+      let m = offlinePubQueue.shift()
+      if (!m) break
+      publish(m[0], m[1], m[2])
+    }
+  })
+}
+
+const closeOnErr = function (err) {
+  if (!err) return false
+  console.error('[AMQP] error', err)
+  amqpConn.close()
+  return true
+}
+
+function publish (exchange, routingKey, content) {
+  try {
+    pubChannel.publish(exchange, routingKey, content, { persistent: true },
+      function (err, ok) {
+        if (err) {
+          console.error('[AMQP] publish', err)
+          offlinePubQueue.push([exchange, routingKey, content])
+          pubChannel.connection.close()
+        }
+      })
+  } catch (e) {
+    console.error('[AMQP] publish', e.message)
+    offlinePubQueue.push([exchange, routingKey, content])
+  }
+}
+
+setInterval(function () {
+  aisDataFetcherID = setInterval(() => {
+    aisDataFetcher('http://ais.rs.no/aktive_pos.json')
+      .then(data => {
+        publish('', 'jobs', Buffer.from('work work work'))
+      })
+  }, 5000)
+})
+
+start()
