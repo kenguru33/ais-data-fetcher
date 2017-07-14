@@ -25,7 +25,6 @@ function start () {
 
 function whenConnected () {
   startPublisher()
-  // startWorker();
 }
 
 let pubChannel = null
@@ -44,6 +43,7 @@ function startPublisher () {
     while (true) {
       const m = offlinePubQueue.shift()
       if (!m) break
+      console.log('ARRAY SHIFTING: ', m)
       publish(m[0], m[1], m[2])
     }
   })
